@@ -1,0 +1,5 @@
+user(USERNAME, name, address, phone_nbr)
+bookings(RESERVATION_NBR, (fkey)username, (fkey)theater_name, (fkey)movie_name)
+theaters(THEATER_NAME, seats)
+performances((fkey)MOVIE_NAME, (fkey)theatre_name, DATE)
+movies(MOVIE_NAME)
