@@ -5,6 +5,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
 
 /**
  * The GUI pane where a user books tickets for movie performances. It contains
@@ -174,16 +175,21 @@ public class BookingPane extends BasicPane {
      */
     private void fillNameList() {
         nameListModel.removeAllElements();
-        /* --- insert own code here --- */
+
+        for (String s : db.getMovies()) {
+            nameListModel.addElement(s);
+        }
     }
 
     /**
      * Fetch performance dates from the database and display them in the date
      * list.
      */
-    private void fillDateList() {
+    private void fillDateList(String movieName) {
         dateListModel.removeAllElements();
-        /* --- insert own code here --- */
+        for (String s : db.getDates(movieName)) {
+            dateListModel.addElement(s);
+        }
     }
 
     /**
@@ -212,7 +218,8 @@ public class BookingPane extends BasicPane {
                 return;
             }
             String movieName = nameList.getSelectedValue();
-            /* --- insert own code here --- */
+            fillDateList(movieName);
+
         }
     }
 
@@ -234,7 +241,12 @@ public class BookingPane extends BasicPane {
             }
             String movieName = nameList.getSelectedValue();
             String date = dateList.getSelectedValue();
-            /* --- insert own code here --- */
+            String theaterName = db.getTheater(movieName, date);
+            int seats = db.getSeats(theaterName) - db.getNbrOfBookings(movieName, date);
+            fields[0].setText(movieName);
+            fields[1].setText(date);
+            fields[2].setText(theaterName);
+            fields[3].setText(String.valueOf(seats));
         }
     }
 
@@ -258,9 +270,25 @@ public class BookingPane extends BasicPane {
                 displayMessage("Must login first");
                 return;
             }
+            
             String movieName = nameList.getSelectedValue();
             String date = dateList.getSelectedValue();
-            /* --- insert own code here --- */
+            String theaterName = fields[2].getText();
+            
+            int availableSeats = db.getSeats(theaterName) - db.getNbrOfBookings(movieName, date);
+            if (availableSeats <= 0){
+            	displayMessage("No seats are available");
+            	return;
+            }
+            
+            int bookingId = db.createBooking(CurrentUser.instance().getCurrentUserId(), movieName, date);
+            if (bookingId != 0){
+            	displayMessage("Success! Your booking id is: " + bookingId);
+            	fields[3].setText(String.valueOf(Integer.parseInt(fields[3].getText()) - 1));
+            }
+            else {
+            	displayMessage("Booking was not successful, please try again later.");
+            }
         }
     }
 }

@@ -11,4 +11,6 @@ public class MovieBooking {
         Database db = new Database();
         new MovieGUI(db);
     }
+    
+
 }
