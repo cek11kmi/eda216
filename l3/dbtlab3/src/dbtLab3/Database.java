@@ -210,7 +210,13 @@ public class Database {
     	return 0;
     }
     
-    public int createBooking(String username, String movieName, String date){
+    public int createBooking(String username, String movieName, String date, String theaterName){
+    	try {
+			conn.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	
     	PreparedStatement ps = null;
     	ResultSet rs = null;
     	try {
@@ -224,6 +230,8 @@ public class Database {
     		ps.executeUpdate();
     		rs = ps.getGeneratedKeys();
     		if (rs.next()){
+    			conn.commit();
+    			conn.setAutoCommit(true);
     			return rs.getInt(1);
     		}
     	} catch (SQLException e){
@@ -231,6 +239,13 @@ public class Database {
     	} finally {
     		closePs(ps, rs);
     	}
+
+    	try {
+        	conn.rollback();
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     	return 0;
     }
     

@@ -1,0 +1,168 @@
+package dbtLab3;
+
+import java.sql.*;
+import java.util.*;
+
+
+/**
+ * Database is a class that specifies the interface to the movie
+ * database. Uses JDBC.
+ */
+public class Database {
+
+    /**
+     * The database connection.
+     */
+    private Connection conn;
+
+    /**
+     * Create the database interface object. Connection to the
+     * database is performed later.
+     */
+    public Database() {
+        conn = null;
+    }
+
+    /**
+     * Open a connection to the database, using the specified user
+     * name and password.
+     */
+    public boolean openConnection(String filename) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:" + filename);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Close the connection to the database.
+     */
+    public void closeConnection() {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Check if the connection to the database has been established
+     * 
+     * @return true if the connection has been established
+     */
+    public boolean isConnected() {
+        return conn != null;
+    }
+
+    public boolean userExists(String userName) {
+        try {
+            String sql =
+                "SELECT *\n" +
+                "FROM   users\n" +
+                "WHERE  username = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+            	return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        	//hur stänger man statements?!
+        }
+        return false;
+    }
+    
+    public List<String> getMovies(){
+    	List<String> found = new LinkedList<>();
+        try {
+            String sql =
+                "SELECT movie_name\n" +
+                "FROM   movies\n";
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+            while (rs.next()) {
+                found.add(rs.getString("movie_name"));
+            }
+            return found;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // code to close our Statement...
+        }
+        return found;
+    }
+    public List<String> getDates(String movieName){
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+    	List<String> found = new LinkedList<>();
+        try {
+            String sql =
+                "SELECT date\n" +
+                "FROM   performances\n" +
+                "WHERE  movie_name = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, movieName);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                found.add(rs.getString("date"));
+            }
+            return found;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        	try {
+    			if (ps != null){
+    				ps.close();
+    			}
+    			if (rs != null){
+    				rs.close();
+    			}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+        }
+        return found;
+    }
+    
+    public String getTheater(String movieName, String date){
+    	PreparedStatement ps = null;
+    	try {
+    		String sql =
+    				"SELECT theater_name\n" +
+    				"FROM performances\n" +
+    				"WHERE movie_name = ?\n" +
+    				"AND date = ?";
+    		ps = conn.prepareStatement(sql);
+    		ps.setString(1, movieName);
+    		ps.setString(2, date);
+    		ResultSet rs = ps.executeQuery();
+    		if (rs.next()){
+    			return rs.getString("theater_name");
+    		}
+    	} catch (SQLException e){
+    		e.printStackTrace();
+    	} finally {
+    		try {
+    			if (ps != null){
+    				ps.close();
+    			}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    		//VAD SKA VI ENS GÖRA HÄR
+    	}
+    	return "";
+    }
+}

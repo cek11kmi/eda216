@@ -165,6 +165,7 @@ public class BookingPane extends BasicPane {
      */
     public void entryActions() {
         clearMessage();
+        dateListModel.clear();
         currentUserNameLabel.setText(CurrentUser.instance().getCurrentUserId());
         fillNameList();
         clearFields();
@@ -187,6 +188,7 @@ public class BookingPane extends BasicPane {
      */
     private void fillDateList(String movieName) {
         dateListModel.removeAllElements();
+        clearFields();
         for (String s : db.getDates(movieName)) {
             dateListModel.addElement(s);
         }
@@ -281,7 +283,7 @@ public class BookingPane extends BasicPane {
             	return;
             }
             
-            int bookingId = db.createBooking(CurrentUser.instance().getCurrentUserId(), movieName, date);
+            int bookingId = db.createBooking(CurrentUser.instance().getCurrentUserId(), movieName, date, theaterName);
             if (bookingId != 0){
             	displayMessage("Success! Your booking id is: " + bookingId);
             	fields[3].setText(String.valueOf(Integer.parseInt(fields[3].getText()) - 1));
