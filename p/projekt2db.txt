@@ -1,0 +1,96 @@
+--pallets(pallet_id, cookie, production_date,blocked)
+--customers(name, address)
+--orders(order_id, delivery_date, placed_date, customer_name)
+--order_details(cookie, amount, order_id)
+--deliveries(order_id, pallet_id, delivery_date)
+--cookies(name)
+--recipe_entries(ingredient, amount, cookie_name)
+--raw_materials(name, amount, unit, last_delivery, amount_delivered)
+
+
+PRAGMA foreign_keys = off;
+DROP TABLE IF EXISTS pallets;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS order_details;
+DROP TABLE IF EXISTS deliveries;
+DROP TABLE IF EXISTS cookies;
+DROP TABLE IF EXISTS recipe_entries;
+DROP TABLE IF EXISTS raw_materials;
+PRAGMA foreign_keys = on;
+
+
+
+CREATE TABLE pallets(
+	palelt_id Integer PRIMARY KEY,
+	cookie_name TEXT,
+	production_date DATE,
+	blocked int (default 0),
+	FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name)
+);
+
+CREATE TABLE customers(
+	customer_name TEXT PRIMARY KEY,
+	customer_address TEXT NOT NULL
+);
+
+CREATE TABLE orders(
+	order_id Integer PRIMARY KEY,
+	delivery_date DATE,
+	placed_date DATE,
+	customer_name TEXT,
+	FOREIGN KEY (customer_name) REFERENCES customers(customer_name)
+);
+
+
+CREATE TABLE order_details(
+	cookie_name TEXT,
+	amount int NOT NULL,
+	order_id Integer,
+	FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
+	FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+	
+
+CREATE TABLE deliveries(
+	order_id Integer,
+	pallet_id Integer,
+	delivered_date DATE,
+	FOREIGN KEY (order_id) REFERENCES orders(order_id),
+	FOREIGN KEY (pallet_id) REFERENCES pallets(pallet_id)
+);
+
+CREATE TABLE cookies(
+	cookie_name TEXT PRIMARY KEY
+);
+
+CREATE TABLE recipe_entries(
+	ingredient TEXT,
+	amount int,
+	cookie_name TEXT
+	PRIMARY KEY (ingredient, cookie_name),
+	FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name)
+	FOREIGN KEY (ingredient) REFERENCES raw_materials(ingredient)
+);
+
+CREATE TABLE raw_materials(
+	ingredient TEXT PRIMARY KEY,
+	total_amount int NOT NULL,
+	unit TEXT NOT NULL,
+	last_delivery DATE,
+	amount_delivered int
+);
+	
+
+INSERT INTO users(serial_number, title)
+VALUES ('10962565134263569953', 'Doctor'),
+	('10962565134263569954','Doctor'),
+	('10962565134263569950','Nurse'),
+	('10962565134263569951', 'Nurse'),
+	('10962565134263569952', 'Nurse'),
+	('10962565134263569946', 'Patient'),
+	('10962565134263569947', 'Patient'),
+	('10962565134263569948', 'Patient'),
+	('10962565134263569949', 'Patient'),
+	('10962565134263569955', 'Government');
+

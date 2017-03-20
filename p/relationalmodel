@@ -1,0 +1,8 @@
+pallets(pallet_id, cookie, production_date, location, blocked)
+customers(name, address)
+orders(order_id, date, customer_name)
+order_details(cookie, amount, order_id)
+deliveries(order_id, pallet_id)
+cookies(name)
+recipe_entries(ingredient, amount, cookie_name)
+raw_materials(name, amount, unit, last_delivery, amount_delivered)
