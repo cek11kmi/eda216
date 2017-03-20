@@ -5,6 +5,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
 
 /**
  * The GUI pane where a user books tickets for movie performances. It contains
@@ -96,6 +97,7 @@ public class BookingPane extends BasicPane {
         nameList.setPrototypeCellValue("123456789012");
         nameList.addListSelectionListener(new NameSelectionListener());
         JScrollPane p1 = new JScrollPane(nameList);
+        p1.setSize(200, 600);
 
         dateListModel = new DefaultListModel<String>();
 

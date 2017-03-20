@@ -227,13 +227,12 @@ public class Database {
     		ps.setString(1, username);
     		ps.setString(2, movieName);
     		ps.setString(3, date);
-    		if (ps.executeUpdate() == 1){
-    			rs = ps.getGeneratedKeys();
-    			if (rs.next()){
-    				conn.commit();
-    				conn.setAutoCommit(true);
-    				return rs.getInt(1);
-    			}
+    		ps.executeUpdate();
+    		rs = ps.getGeneratedKeys();
+    		if (rs.next()){
+    			conn.commit();
+    			conn.setAutoCommit(true);
+    			return rs.getInt(1);
     		}
     	} catch (SQLException e){
     		e.printStackTrace();

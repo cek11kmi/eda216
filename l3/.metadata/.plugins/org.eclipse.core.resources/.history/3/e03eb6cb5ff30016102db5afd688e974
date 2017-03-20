@@ -5,6 +5,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
 
 /**
  * The GUI pane where a user books tickets for movie performances. It contains
@@ -107,6 +108,7 @@ public class BookingPane extends BasicPane {
 
         JPanel p = new JPanel();
         p.setLayout(new GridLayout(1, 2));
+        p.setSize(400, 600);
         p.add(p1);
         p.add(p2);
         return p;
