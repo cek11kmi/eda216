@@ -98,16 +98,15 @@ public class GUI {
 		// Tab objects and tab content
 		tabCreatePallet = new TabCreatePallet(GAP, PADDING, db, primaryStage);
 		tab1.setContent(tabCreatePallet.hBox);
+		tab1.setOnSelectionChanged(e -> tabCreatePallet.restoreInvalidInputs());
 		
 		tabRegisterPallet = new TabRegisterPallet(GAP, PADDING, db);
 		tab2.setContent(tabRegisterPallet.hBox);
+		tab2.setOnSelectionChanged(e -> tabRegisterPallet.restoreInvalidInputs());
 
 
-//		tabRegisterUser = new TabRegisterUser(GAP, PADDING, garage, primaryStage);
-//		tab2.setContent(tabRegisterUser.hBox);
-//
-//		tabSearchUser = new TabSearchUser(GAP, PADDING, primaryStage, garage, tabRegisterUser);
-//		tab3.setContent(tabSearchUser.mainLayout);
+		tabSearchPallet = new TabSearchPallet(GAP, PADDING, db, primaryStage);
+		tab3.setContent(tabSearchPallet.hBox);
 //		tab3.setOnSelectionChanged(new EventHandler<Event>() {
 //
 //			@Override
@@ -144,6 +143,7 @@ public class GUI {
 			System.exit(0);
 		}
 	}
+	
 
 	public Scene getScene() {
 		return scene;

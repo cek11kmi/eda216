@@ -18,4 +18,13 @@
 <fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.sql.Date"/>
 <fullyQualifiedTypeName name="java.sql.Timestamp"/>
+<fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="javafx.scene.control.TableView"/>
+<fullyQualifiedTypeName name="javafx.collections.ObservableList"/>
+<fullyQualifiedTypeName name="javafx.collections.FXCollections"/>
+<fullyQualifiedTypeName name="javafx.beans.property.SimpleStringProperty"/>
+<fullyQualifiedTypeName name="javafx.scene.control.cell.PropertyValueFactory"/>
+<fullyQualifiedTypeName name="javafx.scene.control.TableColumn"/>
+<fullyQualifiedTypeName name="DeliveredPallets"/>
 </qualifiedTypeNameHistroy>

@@ -12,7 +12,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-
 public class TabRegisterPallet {
 
 	// Layout holder
@@ -24,10 +23,8 @@ public class TabRegisterPallet {
 	private Button registerPallet;
 	private Label registrationMessage;
 
-
 	// External objects
 	private Database db;
-
 
 	public TabRegisterPallet(int gap, int padding, Database db) {
 		this.db = db;
@@ -66,36 +63,33 @@ public class TabRegisterPallet {
 		// Vertical box (vBox1) components
 		invalidInputMessage = new Label("");
 		invalidInputMessage.setTextFill(Color.RED);
-		invalidInputMessage.setWrapText(true);
+		invalidInputMessage.setWrapText(false);
 
-		// Add vertical box (vBox1) components
-		vBox1.getChildren().add(grid);
-		vBox1.getChildren().add(invalidInputMessage);
+		registrationMessage = new Label("");
+		registrationMessage.setTextFill(Color.GREEN);
+		registrationMessage.setWrapText(false);
+		grid.add(invalidInputMessage, 0, 2);
+		grid.add(registrationMessage, 0, 3);
 
-		// Vertical box (Is put to the right in hBox, contains a horizontal box)
-		VBox vBox2 = new VBox();
-		vBox2.setAlignment(Pos.BOTTOM_RIGHT);
 
-		// Horizontal box (Is put inside vBox2, contains buttons)
-		HBox hBox2 = new HBox();
-		hBox2.setSpacing(gap);
-		hBox2.setAlignment(Pos.CENTER_RIGHT);
+
+
 
 		// Create pallet
 		registerPallet = new Button("Create pallet");
 		registerPallet.setOnAction(e -> createPallet());
 
-		// Add components to horizontal box (hBox2)
-		hBox2.getChildren().add(registerPallet);
+		grid.add(registerPallet, 1, 1);
+		
+		vBox1.getChildren().add(grid);
 
-		// Add components to vertical box (vBox2)
-		vBox2.getChildren().add(hBox2);
+
+
 
 		// Add major component holders (vBox1 and vBox2) to the horizontal box
 		// (hBox)
 		hBox.getChildren().add(vBox1);
-		hBox.getChildren().add(vBox2);
-		HBox.setHgrow(vBox2, Priority.ALWAYS);
+
 	}
 
 	private void createPallet() {
@@ -109,29 +103,30 @@ public class TabRegisterPallet {
 		if (barCode.length() > 0 && barCode.length() < 101) {
 			try {
 				if (db.setProductionDate(barCode)) {
-					int palletId = db.addPallet(cookieName);
-					if (palletId != 0) {
-						restoreInvalidInputs();
-						clearTextField();
-					}
+					restoreInvalidInputs();
+					validBarcodeInput();
+					clearTextField();
 				} else {
-					invalidNameInput();
+					restoreInvalidInputs();
+					invalidBarcodeInput();
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
-			invalidNameInput();
+			restoreInvalidInputs();
+			invalidBarcodeInput();
 		}
 	}
 
-	private void invalidNameInput() {
+	private void invalidBarcodeInput() {
 		// Mark as YELLOW
 		palletBarcodeTF.setStyle("-fx-background-color: #ffff0052");
-		addInvalidInputMessage(palletBarcodeTF.getText() + " is not a valid cookie name");
+		addInvalidInputMessage(
+				palletBarcodeTF.getText() + " is not a valid cookie barcode or the pallet has already been registered");
 	}
 
-	private void restoreInvalidInputs() {
+	public void restoreInvalidInputs() {
 		// Restore text field colors
 		palletBarcodeTF.setStyle("");
 
@@ -147,6 +142,18 @@ public class TabRegisterPallet {
 		}
 	}
 
+	private void validBarcodeInput() {
+		// Mark as GREEN
+		addValidInputMessage(palletBarcodeTF.getText() + " was successfully registered");
+	}
+
+	private void addValidInputMessage(String message) {
+		if (registrationMessage.getText().length() == 0) {
+			registrationMessage.setText(registrationMessage.getText() + message);
+		} else {
+			registrationMessage.setText(registrationMessage.getText() + ", " + message);
+		}
+	}
 
 	private void clearTextField() {
 		palletBarcodeTF.setText("");

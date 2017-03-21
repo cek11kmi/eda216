@@ -24,7 +24,7 @@ PRAGMA foreign_keys = on;
 CREATE TABLE pallets(
 	pallet_id Integer PRIMARY KEY,
 	cookie_name TEXT,
-	production_date DATE,
+	production_date DATETIME,
 	blocked int default 0,
 	FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name)
 );

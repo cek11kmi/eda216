@@ -73,33 +73,24 @@ public class TabCreatePallet {
 		invalidInputMessage.setWrapText(true);
 
 		// Add vertical box (vBox1) components
-		vBox1.getChildren().add(grid);
-		vBox1.getChildren().add(invalidInputMessage);
 
-		// Vertical box (Is put to the right in hBox, contains a horizontal box)
-		VBox vBox2 = new VBox();
-		vBox2.setAlignment(Pos.BOTTOM_RIGHT);
+		grid.add(invalidInputMessage, 0, 2);
 
-		// Horizontal box (Is put inside vBox2, contains buttons)
-		HBox hBox2 = new HBox();
-		hBox2.setSpacing(gap);
-		hBox2.setAlignment(Pos.CENTER_RIGHT);
+
 
 		// Create pallet
 		createPallet = new Button("Create pallet");
 		createPallet.setOnAction(e -> createPallet());
 
 		// Add components to horizontal box (hBox2)
-		hBox2.getChildren().add(createPallet);
+		grid.add(createPallet, 1, 1);
 
-		// Add components to vertical box (vBox2)
-		vBox2.getChildren().add(hBox2);
+		vBox1.getChildren().add(grid);
 
 		// Add major component holders (vBox1 and vBox2) to the horizontal box
 		// (hBox)
 		hBox.getChildren().add(vBox1);
-		hBox.getChildren().add(vBox2);
-		HBox.setHgrow(vBox2, Priority.ALWAYS);
+
 	}
 
 	private void createPallet() {
@@ -119,7 +110,7 @@ public class TabCreatePallet {
 						clearTextField();
 						showPalletLabelPopUp(Integer.toString(palletId));
 					}
-				}else {
+				} else {
 					invalidNameInput();
 				}
 			} catch (SQLException e) {
@@ -136,7 +127,7 @@ public class TabCreatePallet {
 		addInvalidInputMessage(cookieNameTF.getText() + " is not a valid cookie name");
 	}
 
-	private void restoreInvalidInputs() {
+	public void restoreInvalidInputs() {
 		// Restore text field colors
 		cookieNameTF.setStyle("");
 
