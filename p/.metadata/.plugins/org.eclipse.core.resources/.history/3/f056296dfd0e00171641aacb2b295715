@@ -207,7 +207,8 @@ public class Database {
 		ps.setString(1, product);
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			palletList.add(new Pallet(String.valueOf(rs.getInt(1)), rs.getString(2), new String("N/A"), new String("N/A"),
+			System.out.println(rs.getInt(1));
+			palletList.add(new Pallet(String.valueOf(rs.getInt(1)), rs.getString(2), new String("N/A"), new String("N/A")
 					rs.getString(3), (rs.getInt(4) == 1)));
 		}
 		closePs(ps, rs);

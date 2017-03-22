@@ -200,15 +200,15 @@ public class Database {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
-		String sql = "SELECT pallet_id, cookie_name, production_date, blocked\n"
-				+ "FROM pallets\n" 
+		String sql = "SELECT pallet_id, cookie_name, delivered_date, customer_name, production_date, blocked\n"
+				+ "FROM pallets\n" + "NATURAL JOIN deliveries\n" + "NATURAL JOIN orders\n"
 				+ "WHERE cookie_name = ?";
 		ps = conn.prepareStatement(sql);
 		ps.setString(1, product);
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			palletList.add(new Pallet(String.valueOf(rs.getInt(1)), rs.getString(2), new String("N/A"), new String("N/A"),
-					rs.getString(3), (rs.getInt(4) == 1)));
+			palletList.add(new Pallet(String.valueOf(rs.getInt(1)), rs.getString(2), rs.getString(3), rs.getString(4),
+					rs.getString(5), (rs.getInt(6) == 1)));
 		}
 		closePs(ps, rs);
 		return palletList;

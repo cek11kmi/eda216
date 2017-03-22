@@ -136,26 +136,26 @@ public class TabSearchPallet {
 		TableColumn<SearchPalletDataHolder, String> palletIdColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"ID");
 		palletIdColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("palletId"));
+				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("ID"));
 		TableColumn<SearchPalletDataHolder, String> productNameColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Cookie");
-		productNameColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productName"));
+		palletIdColumn
+				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("Cookie"));
 		
 		TableColumn<SearchPalletDataHolder, String> deliveredDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Delivered");
-		deliveredDateColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("deliveredDate"));
+		palletIdColumn
+				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("Delivered"));
 		
 		TableColumn<SearchPalletDataHolder, String> customerColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Customer");
-		customerColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("customer"));
+		palletIdColumn
+				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("Customer"));
 		
 		TableColumn<SearchPalletDataHolder, String> productionDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Produced");
-		productionDateColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productionDate"));
+		palletIdColumn
+				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("Produced"));
 
 		table.getColumns().addAll(palletIdColumn);
 		table.getColumns().addAll(productNameColumn);
@@ -212,13 +212,13 @@ public class TabSearchPallet {
 					
 					List<Pallet> palletList = db.getPalletsByProduct(product);
 					if (palletList.size() != 0) {
+						System.out.println(product);
 						restoreInvalidInputs();
 						clearTextField();
 						for (Pallet p : palletList) {
 							System.out.println(p);
 						}
 						addPalletsToTable(palletList);
-						
 					}
 				} else {
 					invalidProductInput();
@@ -229,7 +229,6 @@ public class TabSearchPallet {
 		} else {
 			invalidProductInput();
 		}
-		table.refresh();
 
 	}
 
@@ -313,12 +312,14 @@ public class TabSearchPallet {
 		if (palletList != null) {
 			for (Pallet p : palletList) {
 				insertData(p);
+
 			}
 		}
 	}
 
 	private void insertData(Pallet p) {
 		tableData.add(new SearchPalletDataHolder(p.getId(),p.getCookie(),p.getDelivered(),p.getCustomer(),p.getProduced()));
+
 	}
 
 }

@@ -39,8 +39,4 @@ public class Pallet {
 	public boolean getBlocked() {
 		return blocked;
 	}
-	
-	public String toString(){
-		return id + " " + cookie + " " + delivered + " " + customer + " " + produced + " " + blocked;
-	}
 }

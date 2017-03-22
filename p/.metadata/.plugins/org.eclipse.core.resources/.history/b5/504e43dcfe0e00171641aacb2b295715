@@ -139,22 +139,22 @@ public class TabSearchPallet {
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("palletId"));
 		TableColumn<SearchPalletDataHolder, String> productNameColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Cookie");
-		productNameColumn
+		palletIdColumn
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productName"));
 		
 		TableColumn<SearchPalletDataHolder, String> deliveredDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Delivered");
-		deliveredDateColumn
+		palletIdColumn
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("deliveredDate"));
 		
 		TableColumn<SearchPalletDataHolder, String> customerColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Customer");
-		customerColumn
+		palletIdColumn
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("customer"));
 		
 		TableColumn<SearchPalletDataHolder, String> productionDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Produced");
-		productionDateColumn
+		palletIdColumn
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productionDate"));
 
 		table.getColumns().addAll(palletIdColumn);
