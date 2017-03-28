@@ -36,9 +36,9 @@ CREATE TABLE customers(
 
 CREATE TABLE orders(
 	order_id Integer PRIMARY KEY,
-	delivery_date DATE,
+	delivery_date DATE default '0000-00-00',
 	placed_date DATE,
-	customer_name TEXT,
+	customer_name TEXT default 'none',
 	FOREIGN KEY (customer_name) REFERENCES customers(customer_name)
 );
 
@@ -153,3 +153,59 @@ VALUES ('Finkakor AB', 'Helsingborg'),
 	('Partykakor AB', 'Kristianstad'),
 	('Gästkakor AB', 'Hässleholm'),
 	('Skånekakor AB', 'Perstorp');
+
+INSERT INTO orders(delivery_date, placed_date, customer_name)
+VALUES ('2017-04-05', '2017-03-27', 'Småbröd AB'),
+	('2017-04-04', '2017-03-27', 'Finkakor AB'),
+	('2017-04-06', '2017-03-27', 'Kaffebröd AB'),
+	('2017-04-03', '2017-03-27', 'Bjudkakor AB'),
+	('2017-04-09', '2017-03-27', 'Småbröd AB');
+
+INSERT INTO order_details(cookie_name, amount, order_id)
+VALUES	('Nut ring', 1, 1),
+	('Nut ring', 1, 2),
+	('Nut ring', 1, 3),
+	('Nut ring', 1, 4),
+	('Nut cookie', 1, 1),
+	('Nut cookie', 1, 2),
+	('Amneris', 2, 3),
+	('Amneris', 2, 4),
+	('Amneris', 3, 5);
+
+INSERT INTO pallets(cookie_name, production_date)
+VALUES ('Nut ring', '2017-03-27 10:52:03'),
+	('Nut ring', '2017-03-27 10:52:04'),
+	('Nut ring', '2017-03-27 10:52:05'),
+	('Nut ring', '2017-03-27 10:52:06'),
+	('Nut cookie', '2017-03-27 10:52:07'),
+	('Nut cookie', '2017-03-27 10:52:08'),
+	('Amneris', '2017-03-27 10:52:09'),
+	('Amneris', '2017-03-27 10:52:10'),
+	('Amneris', '2017-03-27 10:52:11'),
+	('Amneris', '2017-03-27 10:52:12'),
+	('Amneris', '2017-03-27 10:52:13'),
+	('Amneris', '2017-03-27 10:52:14'),
+	('Amneris', '2017-03-27 10:52:15');
+
+INSERT INTO pallets(cookie_name, production_date, blocked)
+VALUES ('Tango', '2017-03-27 10:52:16', 1);
+
+
+INSERT INTO deliveries(order_id, pallet_id)
+VALUES	(1, 1),
+	(1, 5),
+	(2, 2),
+	(2, 6),
+	(3, 3),
+	(3, 7),
+	(3, 8),
+	(4, 4),
+	(4, 9),
+	(4, 10),
+	(5, 11),
+	(5, 12),
+	(5, 13);
+	
+
+
+

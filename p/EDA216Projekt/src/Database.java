@@ -200,20 +200,170 @@ public class Database {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
-		String sql = "SELECT pallet_id, cookie_name, production_date, blocked\n"
-				+ "FROM pallets\n" 
+		String sql = "SELECT pallet_id, delivery_date, customer_name, production_date, blocked\n"
+				+ "FROM pallets NATURAL JOIN deliveries NATURAL JOIN orders\n" 
 				+ "WHERE cookie_name = ?";
 		ps = conn.prepareStatement(sql);
 		ps.setString(1, product);
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			palletList.add(new Pallet(String.valueOf(rs.getInt(1)), rs.getString(2), new String("N/A"), new String("N/A"),
-					rs.getString(3), (rs.getInt(4) == 1)));
+			String palletId = String.valueOf(rs.getInt(1));
+			String deliveryDate = "";
+			if (!rs.getString(2).equals("0000-00-00")){
+				deliveryDate = rs.getString(2);
+			}
+			String customerName = "";
+			if (!rs.getString(3).equals("none")){
+				customerName = rs.getString(3);
+			}
+			String productionDate = rs.getString(4);
+			palletList.add(new Pallet(palletId, product, deliveryDate, customerName,
+					productionDate, (rs.getInt(5) == 1)));
 		}
 		closePs(ps, rs);
 		return palletList;
 	}
+	
+	public Pallet getPalletByID(int barCode) throws SQLException{
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
+		String sql = "SELECT cookie_name, delivery_date, customer_name, production_date, blocked\n"
+				+ "FROM pallets NATURAL JOIN deliveries NATURAL JOIN orders NATURAL JOIN order_details\n" 
+				+ "WHERE pallet_id = ?";
+		ps = conn.prepareStatement(sql);
+		ps.setInt(1, barCode);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			String cookieName = rs.getString(1);
+			String deliveryDate = "";
+			if (!rs.getString(2).equals("0000-00-00")){
+				deliveryDate = rs.getString(2);
+			}
+			String customerName = "";
+			if (!rs.getString(3).equals("none")){
+				customerName = rs.getString(3);
+			}
+			String productionDate = rs.getString(4);
+			
+			return new Pallet(String.valueOf(barCode), cookieName, deliveryDate, customerName,
+					productionDate, (rs.getInt(5) == 1));
+		}
+		closePs(ps, rs);
+		return null;
+	}
+
+	public List<Pallet> getPalletsByCustomer(String customer) throws SQLException {
+		List<Pallet> palletList = new LinkedList<Pallet>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT pallet_id, cookie_name, delivery_date, production_date, blocked\n"
+				+ "FROM pallets NATURAL JOIN deliveries NATURAL JOIN orders\n" 
+				+ "WHERE customer_name = ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, customer);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			String palletId = String.valueOf(rs.getInt(1));
+			String cookieName = rs.getString(2);
+			String deliveryDate = "";
+			if (!rs.getString(3).equals("0000-00-00")){
+				deliveryDate = rs.getString(3);
+			}
+			String productionDate = rs.getString(4);
+			palletList.add(new Pallet(palletId, cookieName, deliveryDate, customer,
+					productionDate, (rs.getInt(5) == 1)));
+		}
+		closePs(ps, rs);
+		return palletList;
+	}
+	
+	public List<String> getCustomers() throws SQLException {
+		List<String> customerList = new LinkedList<String>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		String sql = "SELECT customer_name\n" + 
+				"FROM customers";
+		ps = conn.prepareStatement(sql);
+		rs = ps.executeQuery();
+		
+		while (rs.next()){
+			customerList.add(rs.getString(1));
+		}
+		closePs(ps, rs);
+		return customerList;
+	}
+	
+	public List<Pallet> getPalletsByTime(String start, String end) throws SQLException {
+		List<Pallet> palletList = new LinkedList<Pallet>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT pallet_id, cookie_name, delivery_date, customer_name, production_date, blocked\n"
+				+ "FROM pallets NATURAL JOIN deliveries NATURAL JOIN orders\n" 
+				+ "WHERE production_date BETWEEN ? AND ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, start);
+		ps.setString(2, end);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			String palletId = String.valueOf(rs.getInt(1));
+			String cookieName = rs.getString(2);
+			String customerName = "";
+			if (!rs.getString(3).equals("none")){
+				customerName = rs.getString(3);
+			}
+			String deliveryDate = "";
+			if (!rs.getString(4).equals("0000-00-00")){
+				deliveryDate = rs.getString(4);
+			}
+			String productionDate = rs.getString(5);
+			palletList.add(new Pallet(palletId, cookieName, deliveryDate, customerName,
+					productionDate, (rs.getInt(6) == 1)));
+		}
+		closePs(ps, rs);
+		return palletList;
+	}
+	
+	public List<Integer> getPalletsByTimeAndCookie(String start, String end, String cookieName) throws SQLException {
+		List<Integer> palletList = new LinkedList<Integer>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT pallet_id\n"
+				+ "FROM pallets\n" 
+				+ "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, cookieName);
+		ps.setString(2, start);
+		ps.setString(3, end);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			palletList.add(rs.getInt(1));
+		}
+		closePs(ps, rs);
+		return palletList;
+	}
+	
+	public boolean blockPallet(int palletId) throws SQLException {
+		PreparedStatement ps = null;
+		
+		String sql = "UPDATE pallets\n" +
+					"SET blocked = 1\n" + 
+					"WHERE pallet_id = ?";
+		ps.getConnection().prepareStatement(sql);
+		ps.setInt(1, palletId);
+		if (ps.executeUpdate() > 0){
+			ps.close();
+			return true;
+		} else {
+			ps.close();
+			return false;
+		}
+	}
+	
 	public void foreignKey() throws SQLException {
 		PreparedStatement ps = null;
 		try {

@@ -1,0 +1,4 @@
+1490697959337	Rename type 'TabBlockedPallets'
+1490697985536	Rename type 'TabBlockPallets'
+1490698765504	Rename field 'searchPalletByTime'
+1490698782447	Rename field 'blockPalletByTimeAndCookie'

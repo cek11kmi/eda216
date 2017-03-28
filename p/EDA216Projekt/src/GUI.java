@@ -26,7 +26,7 @@ public class GUI {
 	public TabCreatePallet tabCreatePallet;
 	private TabRegisterPallet tabRegisterPallet;
 	private TabSearchPallet tabSearchPallet;
-	private TabBlockedPallets tabBlockedPallets;
+	private TabBlockPallet tabBlockPallet;
 
 	// Layout properties
 	private final int GAP = 10;
@@ -47,7 +47,7 @@ public class GUI {
 		initializeTabs(primaryStage);
 
 		// Scene
-		scene = new Scene(vBox, 775, 450); // Arbitrary integers
+		scene = new Scene(vBox, 900, 600); // Arbitrary integers
 	}
 
 	private void initializeMenuBar(Stage primaryStage) {
@@ -81,7 +81,7 @@ public class GUI {
 		Tab tab1 = new Tab("New pallet");
 		Tab tab2 = new Tab("Produce pallet");
 		Tab tab3 = new Tab("Search pallet");
-		Tab tab4 = new Tab("See blocked");
+		Tab tab4 = new Tab("Block pallets");
 
 		tabPane.getTabs().add(tab1);
 		tabPane.getTabs().add(tab2);
@@ -105,21 +105,12 @@ public class GUI {
 		tab2.setOnSelectionChanged(e -> tabRegisterPallet.restoreInvalidInputs());
 
 
-		tabSearchPallet = new TabSearchPallet(GAP, PADDING, db, primaryStage);
+		tabSearchPallet = new TabSearchPallet(GAP, PADDING, db);
 		tab3.setContent(tabSearchPallet.hBox);
-//		tab3.setOnSelectionChanged(new EventHandler<Event>() {
-//
-//			@Override
-//			public void handle(Event arg0) {
-//				if (tab3.isSelected()) {
-//					tabSearchUser.updateUserTable();
-//				}
-//			}
-//
-//		});
-//
-//		tabSearchBike = new TabSearchBike(GAP, PADDING, tabSearchUser, garage);
-//		tab4.setContent(tabSearchBike.mainLayout);
+		tab3.setOnSelectionChanged(e -> tabSearchPallet.restoreInvalidInputs());
+
+		tabBlockPallet = new TabBlockPallet(GAP, PADDING, db);
+		tab4.setContent(tabBlockPallet.hBox);
 //		tab4.setOnSelectionChanged(new EventHandler<Event>() {
 //
 //			@Override
