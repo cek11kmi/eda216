@@ -5,7 +5,7 @@ public class Pallet {
 	private String delivered;
 	private String customer;
 	private String produced;
-	private boolean blocked;
+	private String blocked = "No";
 
 	public Pallet(String id, String cookie, String delivered, String customer, String produced, boolean blocked) {
 		this.id = id;
@@ -13,7 +13,9 @@ public class Pallet {
 		this.delivered = delivered;
 		this.customer = customer;
 		this.produced = produced;
-		this.blocked = blocked;
+		if (blocked){
+			this.blocked = "Yes";
+		}
 	}
 
 	public String getId() {
@@ -36,7 +38,7 @@ public class Pallet {
 		return produced;
 	}
 
-	public boolean getBlocked() {
+	public String getBlocked() {
 		return blocked;
 	}
 	

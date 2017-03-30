@@ -1,8 +1,6 @@
 import java.sql.SQLException;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -111,17 +109,8 @@ public class GUI {
 
 		tabBlockPallet = new TabBlockPallet(GAP, PADDING, db);
 		tab4.setContent(tabBlockPallet.hBox);
-//		tab4.setOnSelectionChanged(new EventHandler<Event>() {
-//
-//			@Override
-//			public void handle(Event arg0) {
-//				if (tab4.isSelected()) {
-//					// Inserts bike data into the table
-//					tabSearchBike.addAllBikesToTable();
-//
-//				}
-//			}
-//		});
+		tab4.setOnSelectionChanged(e -> {if (tab4.isSelected()){tabBlockPallet.addAllBlockedPalletsToTable();}});
+
 
 	}
 

@@ -3,7 +3,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -327,34 +326,38 @@ public class Database {
 		return palletList;
 	}
 	
-	public List<Integer> getPalletsByTimeAndCookie(String start, String end, String cookieName) throws SQLException {
-		List<Integer> palletList = new LinkedList<Integer>();
+	public List<Pallet> getAllBlockedPallets() throws SQLException {
+		List<Pallet> palletList = new LinkedList<Pallet>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
-		String sql = "SELECT pallet_id\n"
+		String sql = "SELECT pallet_id, cookie_name, production_date, blocked\n"
 				+ "FROM pallets\n" 
-				+ "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?";
+				+ "WHERE blocked = 1";
 		ps = conn.prepareStatement(sql);
-		ps.setString(1, cookieName);
-		ps.setString(2, start);
-		ps.setString(3, end);
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			palletList.add(rs.getInt(1));
+			String palletId = String.valueOf(rs.getInt(1));
+			String cookieName = rs.getString(2);
+			
+			String productionDate = rs.getString(3);
+			palletList.add(new Pallet(palletId, cookieName, null, null,
+					productionDate, (rs.getInt(4) == 1)));
 		}
 		closePs(ps, rs);
 		return palletList;
 	}
 	
-	public boolean blockPallet(int palletId) throws SQLException {
+	public boolean blockPalletsByTimeAndCookie(String start, String end, String cookieName) throws SQLException {
 		PreparedStatement ps = null;
-		
+
 		String sql = "UPDATE pallets\n" +
 					"SET blocked = 1\n" + 
-					"WHERE pallet_id = ?";
-		ps.getConnection().prepareStatement(sql);
-		ps.setInt(1, palletId);
+					"WHERE cookie_name = ? AND production_date BETWEEN ? AND ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, cookieName);
+		ps.setString(2, start);
+		ps.setString(3, end);
 		if (ps.executeUpdate() > 0){
 			ps.close();
 			return true;
@@ -363,6 +366,7 @@ public class Database {
 			return false;
 		}
 	}
+
 	
 	public void foreignKey() throws SQLException {
 		PreparedStatement ps = null;

@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -18,8 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+
 
 public class TabSearchPallet {
 	// Layout holder
@@ -62,6 +60,7 @@ public class TabSearchPallet {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initializeComponents(int gap, int padding) {
 		// Horizontal box
 		hBox = new HBox();
@@ -316,7 +315,6 @@ public class TabSearchPallet {
 		String time2 = time2TF.getText();
 		
 		if (time1.length() == 19 && time2.length() == 19) {
-			System.out.println("bajs");
 			try {
 				List<Pallet> palletList = db.getPalletsByTime(time1, time2);
 					if (palletList.size() != 0) {

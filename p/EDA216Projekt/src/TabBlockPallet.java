@@ -1,12 +1,11 @@
 import java.sql.SQLException;
-import java.util.LinkedList;
+
 import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -18,8 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+
 
 public class TabBlockPallet {
 	// Layout holder
@@ -37,8 +35,8 @@ public class TabBlockPallet {
 
 
 
-	private TableView<SearchPalletDataHolder> table;
-	private final ObservableList<SearchPalletDataHolder> tableData = FXCollections
+	private TableView<BlockPalletDataHolder> table;
+	private final ObservableList<BlockPalletDataHolder> tableData = FXCollections
 			.observableArrayList(
 
 	);
@@ -54,6 +52,7 @@ public class TabBlockPallet {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initializeComponents(int gap, int padding) {
 		// Horizontal box
 		hBox = new HBox();
@@ -135,7 +134,7 @@ public class TabBlockPallet {
 		hBox.getChildren().add(vBox1);
 		
 		
-		table = new TableView<SearchPalletDataHolder>();
+		table = new TableView<BlockPalletDataHolder>();
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Removes
 																					// unspecified
 																					// empty
@@ -143,47 +142,69 @@ public class TabBlockPallet {
 																					// inuserTable
 		table.setItems(tableData);
 
-		TableColumn<SearchPalletDataHolder, String> palletIdColumn = new TableColumn<SearchPalletDataHolder, String>(
+		TableColumn<BlockPalletDataHolder, String> palletIdColumn = new TableColumn<BlockPalletDataHolder, String>(
 				"ID");
 		palletIdColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("palletId"));
+				.setCellValueFactory(new PropertyValueFactory<BlockPalletDataHolder, String>("palletId"));
 		palletIdColumn.setMinWidth(30);
 		palletIdColumn.setMaxWidth(30);
-		TableColumn<SearchPalletDataHolder, String> productNameColumn = new TableColumn<SearchPalletDataHolder, String>(
+		TableColumn<BlockPalletDataHolder, String> productNameColumn = new TableColumn<BlockPalletDataHolder, String>(
 				"Cookie");
 		productNameColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productName"));
-		
-		TableColumn<SearchPalletDataHolder, String> deliveredDateColumn = new TableColumn<SearchPalletDataHolder, String>(
-				"Delivery");
-		deliveredDateColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("deliveryDate"));
-		
-		TableColumn<SearchPalletDataHolder, String> customerColumn = new TableColumn<SearchPalletDataHolder, String>(
-				"Customer");
-		customerColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("customer"));
-		
-		TableColumn<SearchPalletDataHolder, String> productionDateColumn = new TableColumn<SearchPalletDataHolder, String>(
+				.setCellValueFactory(new PropertyValueFactory<BlockPalletDataHolder, String>("productName"));
+
+		TableColumn<BlockPalletDataHolder, String> productionDateColumn = new TableColumn<BlockPalletDataHolder, String>(
 				"Produced");
 		productionDateColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productionDate"));
+				.setCellValueFactory(new PropertyValueFactory<BlockPalletDataHolder, String>("productionDate"));
+		
+		TableColumn<BlockPalletDataHolder, String> blockedColumn = new TableColumn<BlockPalletDataHolder, String>(
+				"Blocked");
+		blockedColumn
+				.setCellValueFactory(new PropertyValueFactory<BlockPalletDataHolder, String>("blocked"));
+
+		
 
 		table.getColumns().addAll(palletIdColumn);
 		table.getColumns().addAll(productNameColumn);
-		table.getColumns().addAll(deliveredDateColumn);
-		table.getColumns().addAll(customerColumn);
 		table.getColumns().addAll(productionDateColumn);
+		table.getColumns().addAll(blockedColumn);
 
 
 		vBox2.getChildren().add(table);
 		
 		hBox.getChildren().add(vBox2);
 		HBox.setHgrow(vBox2, Priority.ALWAYS);
+		
+
 	}
 
 	
 	private void blockPalletsByTimeAndCookie(){
+		String start = time1TF.getText();
+		String end = time2TF.getText();
+		String product = productTF.getText();
+		
+		if (start.length() == 19 && end.length() == 19) {
+			try {
+				if (db.getCookies().contains(product)){
+					if (db.blockPalletsByTimeAndCookie(start, end, product)){
+						addAllBlockedPalletsToTable();
+					} else {
+						//invalidBlockMessage();
+						System.out.println("Fanns inget att blocka");
+					}
+				} else {
+					invalidProductInput();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			invalidTimeInput();
+		}
+
+		
 		
 	}
 //	private void searchPalletByBarcode() {
@@ -274,22 +295,7 @@ public class TabBlockPallet {
 //		String time1 = time1TF.getText();
 //		String time2 = time2TF.getText();
 //		
-//		if (time1.length() == 19 && time2.length() == 19) {
-//			System.out.println("bajs");
-//			try {
-//				List<Pallet> palletList = db.getPalletsByTime(time1, time2);
-//					if (palletList.size() != 0) {
-//						restoreInvalidInputs();
-//						clearTextField();
-//						addPalletsToTable(palletList);
-//					}
-//			} catch (SQLException e) {
-//				invalidTimeInput();
-//			}
-//		} else {
-//			invalidTimeInput();
-//		}
-//		table.refresh();
+//		
 //	}
 //
 //	private void invalidBarCodeInput() {
@@ -298,11 +304,11 @@ public class TabBlockPallet {
 //		addInvalidInputMessage(barCodeTF.getText() + " is not a valid bar code");
 //	}
 //
-//	private void invalidProductInput() {
-//		// Mark as YELLOW
-//		productTF.setStyle("-fx-background-color: #ffff0052");
-//		addInvalidProductInputMessage(productTF.getText() + " is not a valid cookie name");
-//	}
+	private void invalidProductInput() {
+		// Mark as YELLOW
+		productTF.setStyle("-fx-background-color: #ffff0052");
+		addInvalidProductInputMessage(productTF.getText() + " is not a valid cookie name");
+	}
 //	
 //	private void invalidCustomerInput() {
 //		// Mark as YELLOW
@@ -310,35 +316,31 @@ public class TabBlockPallet {
 //		addInvalidCustomerInputMessage(customerTF.getText() + " is not a valid customer name");
 //	}
 //
-//	private void invalidTimeInput() {
-//		//Mark as YELLOW
-//		time1TF.setStyle("-fx-background-color: #ffff0052");
-//		time2TF.setStyle("-fx-background-color: #ffff0052");
-//		addInvalidTimeInputMessage(time1TF.getText() + " and/or " + time2TF.getText() + " not valid");
-//	}
+	private void invalidTimeInput() {
+		//Mark as YELLOW
+		time1TF.setStyle("-fx-background-color: #ffff0052");
+		time2TF.setStyle("-fx-background-color: #ffff0052");
+		addInvalidTimeInputMessage(time1TF.getText() + " and/or " + time2TF.getText() + " not valid");
+	}
 //	
-//	public void restoreInvalidInputs() {
-//		// Restore text field colors
-//		barCodeTF.setStyle("");
-//		productTF.setStyle("");
-//		customerTF.setStyle("");
-//		time1TF.setStyle("");
-//		time2TF.setStyle("");
-//
-//		// Set the error message label text to an "empty" string
-//		invalidBarcodeInputMessage.setText("");
-//		invalidProductInputMessage.setText("");
-//		invalidCustomerInputMessage.setText("");
-//		invalidTimeMessage.setText("");
-//	}
-//
-//	private void addInvalidProductInputMessage(String message) {
-//		if (invalidProductInputMessage.getText().length() == 0) {
-//			invalidProductInputMessage.setText(invalidProductInputMessage.getText() + message);
-//		} else {
-//			invalidProductInputMessage.setText(invalidProductInputMessage.getText() + ", " + message);
-//		}
-//	}
+	public void restoreInvalidInputs() {
+		// Restore text field colors
+		productTF.setStyle("");
+		time1TF.setStyle("");
+		time2TF.setStyle("");
+
+		// Set the error message label text to an "empty" string
+		invalidProductMessage.setText("");
+		invalidTimeMessage.setText("");
+	}
+
+	private void addInvalidProductInputMessage(String message) {
+		if (invalidProductMessage.getText().length() == 0) {
+			invalidProductMessage.setText(invalidProductMessage.getText() + message);
+		} else {
+			invalidProductMessage.setText(invalidProductMessage.getText() + ", " + message);
+		}
+	}
 //
 //	private void addInvalidInputMessage(String message) {
 //		if (invalidBarcodeInputMessage.getText().length() == 0) {
@@ -356,13 +358,13 @@ public class TabBlockPallet {
 //		}
 //	}
 //	
-//	private void addInvalidTimeInputMessage(String message) {
-//		if (invalidTimeMessage.getText().length() == 0) {
-//			invalidTimeMessage.setText(invalidTimeMessage.getText() + message);
-//		} else {
-//			invalidTimeMessage.setText(invalidTimeMessage.getText() + ", " + message);
-//		}
-//	}
+	private void addInvalidTimeInputMessage(String message) {
+		if (invalidTimeMessage.getText().length() == 0) {
+			invalidTimeMessage.setText(invalidTimeMessage.getText() + message);
+		} else {
+			invalidTimeMessage.setText(invalidTimeMessage.getText() + ", " + message);
+		}
+	}
 //
 //
 //
@@ -382,9 +384,29 @@ public class TabBlockPallet {
 			}
 		}
 	}
+	
+	public void addAllBlockedPalletsToTable(){
+		emptyTable();
+		List<Pallet> palletList;
+		try {
+			palletList = db.getAllBlockedPallets();
+			if (palletList.size() != 0){
+				for (Pallet p : palletList){
+					insertData(p);
+				}
+			} else {
+				System.out.println("No blocked pallets");
+			}
+			table.refresh();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	private void insertData(Pallet p) {
-		tableData.add(new SearchPalletDataHolder(p.getId(),p.getCookie(),p.getDelivered(),p.getCustomer(),p.getProduced()));
+		tableData.add(new BlockPalletDataHolder(p.getId(),p.getCookie(),p.getProduced(), p.getBlocked()));
 	}
 
 }
