@@ -247,7 +247,13 @@ public class TabSearchPallet {
 				restoreInvalidInputs();
 				clearTextField();
 				List<Pallet> palletList = new LinkedList<Pallet>();
-				palletList.add(db.getPalletByID(barCodeInt));
+				Pallet p = db.getPalletByID(barCodeInt);
+				if(p == null){
+					palletList.add(db.getPalletByIDRestricted(barCodeInt));
+				} else {
+					palletList.add(p);
+				}
+
 				addPalletsToTable(palletList);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -269,7 +275,8 @@ public class TabSearchPallet {
 					if (palletList.size() != 0) {
 						restoreInvalidInputs();
 						clearTextField();
-						addPalletsToTable(palletList);	
+						addPalletsToTable(palletList);
+						//TODO lägg till så att den hittar även om det inte finns en order för palleten
 					}
 				} else {
 					invalidProductInput();
@@ -295,7 +302,8 @@ public class TabSearchPallet {
 					if (palletList.size() != 0) {
 						restoreInvalidInputs();
 						clearTextField();
-						addPalletsToTable(palletList);				
+						addPalletsToTable(palletList);		
+						//TODO lägg till så att den hittar även om det inte finns en order för palleten
 					}
 				} else {
 					invalidCustomerInput();
@@ -415,7 +423,7 @@ public class TabSearchPallet {
 
 	public void addPalletsToTable(List<Pallet> palletList) {
 		emptyTable();
-		if (palletList != null) {
+		if (palletList != null && !palletList.isEmpty()) {
 			for (Pallet p : palletList) {
 				insertData(p);
 			}

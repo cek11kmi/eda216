@@ -9,7 +9,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
+/**
+ * 
+ * @author cek11kmi
+ *This class is NOT used
+ */
 public class TabRegisterPallet {
 
 	// Layout holder

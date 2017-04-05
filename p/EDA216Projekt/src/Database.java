@@ -251,6 +251,29 @@ public class Database {
 		closePs(ps, rs);
 		return null;
 	}
+	
+	public Pallet getPalletByIDRestricted(int barCode) throws SQLException{
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+
+			String sql = "SELECT cookie_name, production_date, blocked\n"
+					+ "FROM pallets \n" 
+					+ "WHERE pallet_id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, barCode);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				String cookieName = rs.getString(1);
+				String deliveryDate = "";
+				String customerName = "";
+				String productionDate = rs.getString(2);
+				
+				return new Pallet(String.valueOf(barCode), cookieName, deliveryDate, customerName,
+						productionDate, (rs.getInt(3) == 1));
+			}
+			closePs(ps, rs);
+			return null;
+	}
 
 	public List<Pallet> getPalletsByCustomer(String customer) throws SQLException {
 		List<Pallet> palletList = new LinkedList<Pallet>();
@@ -366,6 +389,48 @@ public class Database {
 			return false;
 		}
 	}
+	
+	public boolean updateMaterials(String material, double amount) throws SQLException{
+		PreparedStatement ps = null;
+
+		String sql = "UPDATE raw_materials\n" +
+					"SET total_amount = total_amount-?\n" + 
+					"WHERE ingredient = ?";
+		ps = conn.prepareStatement(sql);
+		ps.setDouble(1, amount);
+		ps.setString(2, material);
+		if (ps.executeUpdate() > 0){
+			ps.close();
+			return true;
+		} else {
+			ps.close();
+			return false;
+		}
+	}
+	
+	public List<String> getRecipe(String cookieName) throws SQLException{
+		StringBuilder sb = new StringBuilder();
+		List<String> recipes = new LinkedList<String>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT ingredient, amount\n"
+				+ "FROM recipe_entries\n" 
+				+ "WHERE cookie_name = ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, cookieName);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			sb.append(rs.getString(1));
+			sb.append(":" + rs.getInt(2));
+			recipes.add(sb.toString());
+			sb = new StringBuilder();
+		}
+		closePs(ps, rs);
+		return recipes;
+	}
+	
+	
 
 	
 	public void foreignKey() throws SQLException {

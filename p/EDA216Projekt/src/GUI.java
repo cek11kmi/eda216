@@ -76,40 +76,33 @@ public class GUI {
 		vBox.getChildren().add(tabPane);
 
 		// Tabs
-		Tab tab1 = new Tab("New pallet");
-		Tab tab2 = new Tab("Produce pallet");
-		Tab tab3 = new Tab("Search pallet");
-		Tab tab4 = new Tab("Block pallets");
+		Tab tab1 = new Tab("Produce pallet");
+		Tab tab2 = new Tab("Search pallet");
+		Tab tab3 = new Tab("Block pallets");
 
 		tabPane.getTabs().add(tab1);
 		tabPane.getTabs().add(tab2);
 		tabPane.getTabs().add(tab3);
-		tabPane.getTabs().add(tab4);
 
 
 		// Tab configurations
 		tab1.setClosable(false);
 		tab2.setClosable(false);
 		tab3.setClosable(false);
-		tab4.setClosable(false);
 
 		// Tab objects and tab content
 		tabCreatePallet = new TabCreatePallet(GAP, PADDING, db, primaryStage);
 		tab1.setContent(tabCreatePallet.hBox);
 		tab1.setOnSelectionChanged(e -> tabCreatePallet.restoreInvalidInputs());
-		
-		tabRegisterPallet = new TabRegisterPallet(GAP, PADDING, db);
-		tab2.setContent(tabRegisterPallet.hBox);
-		tab2.setOnSelectionChanged(e -> tabRegisterPallet.restoreInvalidInputs());
 
 
 		tabSearchPallet = new TabSearchPallet(GAP, PADDING, db);
-		tab3.setContent(tabSearchPallet.hBox);
-		tab3.setOnSelectionChanged(e -> tabSearchPallet.restoreInvalidInputs());
+		tab2.setContent(tabSearchPallet.hBox);
+		tab2.setOnSelectionChanged(e -> tabSearchPallet.restoreInvalidInputs());
 
 		tabBlockPallet = new TabBlockPallet(GAP, PADDING, db);
-		tab4.setContent(tabBlockPallet.hBox);
-		tab4.setOnSelectionChanged(e -> {if (tab4.isSelected()){tabBlockPallet.addAllBlockedPalletsToTable();}});
+		tab3.setContent(tabBlockPallet.hBox);
+		tab3.setOnSelectionChanged(e -> {if (tab3.isSelected()){tabBlockPallet.addAllBlockedPalletsToTable();}});
 
 
 	}

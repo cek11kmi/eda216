@@ -107,7 +107,16 @@ public class TabCreatePallet {
 					if (palletId != 0) {
 						restoreInvalidInputs();
 						clearTextField();
+						db.setProductionDate(Integer.toString(palletId));
 						showPalletLabelPopUp(Integer.toString(palletId));
+						for (String s: db.getRecipe(cookieName)){
+							String[] entry = s.split(":");
+							String material = entry[0];
+							double amount = Double.valueOf(entry[1]);
+							amount = amount*54; //5400 cookies per pallet, 100 cookies from one recipe entry
+							db.updateMaterials(material, amount);
+							System.out.println("Removed " + amount + " of " + material + " from raw materials");
+						}
 					}
 				} else {
 					invalidNameInput();
@@ -154,7 +163,7 @@ public class TabCreatePallet {
 		PINCodeGrid.setVgap(gap);
 
 		// Grid pane (PINCodeGrid) components
-		Label message = new Label("The pallet's barcode number is: ");
+		Label message = new Label("The pallet's bar code is: ");
 		palletLabel = new Label("");
 
 		// Add grid pane (PINCodeGrid) components
