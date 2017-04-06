@@ -223,6 +223,29 @@ public class Database {
 		return palletList;
 	}
 	
+	public List<Pallet> getPalletsByProductRestricted(String product) throws SQLException {
+		List<Pallet> palletList = new LinkedList<Pallet>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT pallet_id, production_date, blocked\n"
+				+ "FROM pallets\n" 
+				+ "WHERE cookie_name = ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, product);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			String palletId = String.valueOf(rs.getInt(1));
+			String deliveryDate = "";
+			String customerName = "";
+			String productionDate = rs.getString(2);
+			palletList.add(new Pallet(palletId, product, deliveryDate, customerName,
+					productionDate, (rs.getInt(3) == 1)));
+		}
+		closePs(ps, rs);
+		return palletList;
+	}
+	
 	public Pallet getPalletByID(int barCode) throws SQLException{
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -344,6 +367,31 @@ public class Database {
 			String productionDate = rs.getString(5);
 			palletList.add(new Pallet(palletId, cookieName, deliveryDate, customerName,
 					productionDate, (rs.getInt(6) == 1)));
+		}
+		closePs(ps, rs);
+		return palletList;
+	}
+	
+	public List<Pallet> getPalletsByTimeRestricted(String start, String end) throws SQLException {
+		List<Pallet> palletList = new LinkedList<Pallet>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT pallet_id, cookie_name, production_date, blocked\n"
+				+ "FROM pallets\n" 
+				+ "WHERE production_date BETWEEN ? AND ?";
+		ps = conn.prepareStatement(sql);
+		ps.setString(1, start);
+		ps.setString(2, end);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			String palletId = String.valueOf(rs.getInt(1));
+			String cookieName = rs.getString(2);
+			String customerName = "";
+			String deliveryDate = "";
+			String productionDate = rs.getString(3);
+			palletList.add(new Pallet(palletId, cookieName, deliveryDate, customerName,
+					productionDate, (rs.getInt(4) == 1)));
 		}
 		closePs(ps, rs);
 		return palletList;

@@ -1,6 +1,5 @@
 import java.sql.SQLException;
 
-
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -33,7 +32,6 @@ public class GUI {
 	// Menu bar
 	private MenuBar menuBar;
 
-
 	public GUI(Stage primaryStage, Database db) throws SQLException {
 		this.db = db;
 		startDB();
@@ -64,7 +62,7 @@ public class GUI {
 		menuBar.getMenus().add(menu1);
 
 	}
-	
+
 	private void exit() {
 		db.closeConnection();
 		System.exit(0);
@@ -84,7 +82,6 @@ public class GUI {
 		tabPane.getTabs().add(tab2);
 		tabPane.getTabs().add(tab3);
 
-
 		// Tab configurations
 		tab1.setClosable(false);
 		tab2.setClosable(false);
@@ -95,15 +92,22 @@ public class GUI {
 		tab1.setContent(tabCreatePallet.hBox);
 		tab1.setOnSelectionChanged(e -> tabCreatePallet.restoreInvalidInputs());
 
-
 		tabSearchPallet = new TabSearchPallet(GAP, PADDING, db);
 		tab2.setContent(tabSearchPallet.hBox);
-		tab2.setOnSelectionChanged(e -> tabSearchPallet.restoreInvalidInputs());
+		tab2.setOnSelectionChanged(e -> {
+			tabSearchPallet.restoreInvalidInputs();
+			tabSearchPallet.clearTextFields();
+		});
 
 		tabBlockPallet = new TabBlockPallet(GAP, PADDING, db);
 		tab3.setContent(tabBlockPallet.hBox);
-		tab3.setOnSelectionChanged(e -> {if (tab3.isSelected()){tabBlockPallet.addAllBlockedPalletsToTable();}});
-
+		tab3.setOnSelectionChanged(e -> {
+			if (tab3.isSelected()) {
+				tabBlockPallet.addAllBlockedPalletsToTable();
+			}
+			tabBlockPallet.restoreInvalidInputs();
+			tabBlockPallet.clearTextFields();
+		});
 
 	}
 
@@ -116,7 +120,6 @@ public class GUI {
 			System.exit(0);
 		}
 	}
-	
 
 	public Scene getScene() {
 		return scene;

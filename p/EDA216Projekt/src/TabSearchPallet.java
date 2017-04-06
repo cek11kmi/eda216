@@ -18,7 +18,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-
 public class TabSearchPallet {
 	// Layout holder
 	public HBox hBox;
@@ -31,27 +30,23 @@ public class TabSearchPallet {
 	private TextField productTF;
 	private Label invalidProductInputMessage;
 	private Button searchPalletByProduct;
-	
+
 	private TextField customerTF;
 	private Label invalidCustomerInputMessage;
 	private Button searchPalletByCustomer;
-	
+
 	private TextField time1TF;
 	private TextField time2TF;
 	private Label invalidTimeMessage;
 	private Button searchPalletByTime;
 
-
-
 	private TableView<SearchPalletDataHolder> table;
-	private final ObservableList<SearchPalletDataHolder> tableData = FXCollections
-			.observableArrayList(
+	private final ObservableList<SearchPalletDataHolder> tableData = FXCollections.observableArrayList(
 
 	);
 
 	// External objects
 	private Database db;
-
 
 	public TabSearchPallet(int gap, int padding, Database db) {
 		this.db = db;
@@ -109,44 +104,44 @@ public class TabSearchPallet {
 		invalidProductInputMessage.setWrapText(true);
 
 		grid.add(invalidProductInputMessage, 0, 5);
-		
+
 		Label customer = new Label("Search for pallets by customer");
-		
+
 		customerTF = new TextField();
 		customerTF.setPromptText("E.g. Småbröd AB");
-		
+
 		grid.add(customer, 0, 6);
 		grid.add(customerTF, 0, 7);
-		
+
 		invalidCustomerInputMessage = new Label("");
 		invalidCustomerInputMessage.setTextFill(Color.RED);
 		invalidCustomerInputMessage.setWrapText(true);
-		
+
 		grid.add(invalidCustomerInputMessage, 0, 8);
-		
+
 		Label time = new Label("Search for pallets by time");
 		Label timeFrom = new Label("From:");
 		Label timeTo = new Label("To:");
-		
+
 		time1TF = new TextField();
 		time1TF.setPromptText("E.g. 2017-03-28 12:24:55");
-		
+
 		time2TF = new TextField();
 		time2TF.setPromptText("E.g. 2017-03-28 12:24:55");
-		
+
 		grid.add(time, 0, 9);
 		grid.add(timeFrom, 0, 10);
 		grid.add(time1TF, 0, 11);
-		
+
 		grid.add(timeTo, 0, 12);
 		grid.add(time2TF, 0, 13);
-		
+
 		invalidTimeMessage = new Label("");
 		invalidTimeMessage.setTextFill(Color.RED);
 		invalidTimeMessage.setWrapText(true);
-		
+
 		grid.add(invalidTimeMessage, 0, 14);
-		
+
 		// Add vertical box (vBox1) components
 
 		// Vertical box (Is put to the right in hBox, contains a horizontal box)
@@ -159,10 +154,10 @@ public class TabSearchPallet {
 
 		searchPalletByProduct = new Button("Search");
 		searchPalletByProduct.setOnAction(e -> searchPalletByProduct());
-		
+
 		searchPalletByCustomer = new Button("Search");
 		searchPalletByCustomer.setOnAction(e -> searchPalletsByCustomer());
-		
+
 		searchPalletByTime = new Button("Search");
 		searchPalletByTime.setOnAction(e -> searchPalletsByTime());
 
@@ -171,43 +166,37 @@ public class TabSearchPallet {
 		grid.add(searchPalletByCustomer, 1, 7);
 		grid.add(searchPalletByTime, 1, 13);
 		vBox1.getChildren().add(grid);
-		
-		
-		
+
 		// Add major component holders (vBox1 and vBox2) to the horizontal box
 		// (hBox)
 		hBox.getChildren().add(vBox1);
-		
-		
+
 		table = new TableView<SearchPalletDataHolder>();
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Removes
-																					// unspecified
-																					// empty
-																					// column
-																					// inuserTable
+																			// unspecified
+																			// empty
+																			// column
+																			// inuserTable
 		table.setItems(tableData);
 
 		TableColumn<SearchPalletDataHolder, String> palletIdColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"ID");
-		palletIdColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("palletId"));
+		palletIdColumn.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("palletId"));
 		palletIdColumn.setMinWidth(30);
 		palletIdColumn.setMaxWidth(30);
 		TableColumn<SearchPalletDataHolder, String> productNameColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Cookie");
-		productNameColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productName"));
-		
+		productNameColumn.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("productName"));
+
 		TableColumn<SearchPalletDataHolder, String> deliveredDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Delivery");
 		deliveredDateColumn
 				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("deliveryDate"));
-		
+
 		TableColumn<SearchPalletDataHolder, String> customerColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Customer");
-		customerColumn
-				.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("customer"));
-		
+		customerColumn.setCellValueFactory(new PropertyValueFactory<SearchPalletDataHolder, String>("customer"));
+
 		TableColumn<SearchPalletDataHolder, String> productionDateColumn = new TableColumn<SearchPalletDataHolder, String>(
 				"Produced");
 		productionDateColumn
@@ -219,9 +208,8 @@ public class TabSearchPallet {
 		table.getColumns().addAll(customerColumn);
 		table.getColumns().addAll(productionDateColumn);
 
-
 		vBox2.getChildren().add(table);
-		
+
 		hBox.getChildren().add(vBox2);
 		HBox.setHgrow(vBox2, Priority.ALWAYS);
 	}
@@ -238,17 +226,16 @@ public class TabSearchPallet {
 		if (barCode.length() > 0 && barCode.length() < 101) {
 			try {
 				barCodeInt = Integer.parseInt(barCode);
-			}
-			catch (NumberFormatException e){
+			} catch (NumberFormatException e) {
 				invalidBarCodeInput();
 				return;
 			}
 			try {
 				restoreInvalidInputs();
-				clearTextField();
+				clearTextFields();
 				List<Pallet> palletList = new LinkedList<Pallet>();
 				Pallet p = db.getPalletByID(barCodeInt);
-				if(p == null){
+				if (p == null) {
 					palletList.add(db.getPalletByIDRestricted(barCodeInt));
 				} else {
 					palletList.add(p);
@@ -266,17 +253,19 @@ public class TabSearchPallet {
 	private void searchPalletByProduct() {
 		restoreInvalidInputs();
 		String product = productTF.getText();
-		
+
 		if (product.length() > 0 && product.length() < 101) {
 			try {
 				if (db.getCookies().contains(product)) {
-					
+					emptyTable();
+					restoreInvalidInputs();
+					clearTextFields();
 					List<Pallet> palletList = db.getPalletsByProduct(product);
 					if (palletList.size() != 0) {
-						restoreInvalidInputs();
-						clearTextField();
 						addPalletsToTable(palletList);
-						//TODO lägg till så att den hittar även om det inte finns en order för palleten
+					} else {
+						palletList = db.getPalletsByProductRestricted(product);
+						addPalletsToTable(palletList);
 					}
 				} else {
 					invalidProductInput();
@@ -289,21 +278,20 @@ public class TabSearchPallet {
 		}
 		table.refresh();
 	}
-	
-	private void searchPalletsByCustomer(){
+
+	private void searchPalletsByCustomer() {
 		restoreInvalidInputs();
 		String customer = customerTF.getText();
-		
+
 		if (customer.length() > 0 && customer.length() < 101) {
 			try {
 				if (db.getCustomers().contains(customer)) {
-					
+					emptyTable();
+					restoreInvalidInputs();
+					clearTextFields();
 					List<Pallet> palletList = db.getPalletsByCustomer(customer);
 					if (palletList.size() != 0) {
-						restoreInvalidInputs();
-						clearTextField();
-						addPalletsToTable(palletList);		
-						//TODO lägg till så att den hittar även om det inte finns en order för palleten
+						addPalletsToTable(palletList);
 					}
 				} else {
 					invalidCustomerInput();
@@ -316,20 +304,24 @@ public class TabSearchPallet {
 		}
 		table.refresh();
 	}
-	
-	private void searchPalletsByTime(){
+
+	private void searchPalletsByTime() {
 		restoreInvalidInputs();
 		String time1 = time1TF.getText();
 		String time2 = time2TF.getText();
-		
+
 		if (time1.length() == 19 && time2.length() == 19) {
+			emptyTable();
+			restoreInvalidInputs();
+			clearTextFields();
 			try {
 				List<Pallet> palletList = db.getPalletsByTime(time1, time2);
-					if (palletList.size() != 0) {
-						restoreInvalidInputs();
-						clearTextField();
-						addPalletsToTable(palletList);
-					}
+				if (palletList.size() != 0) {
+					addPalletsToTable(palletList);
+				} else {
+					palletList = db.getPalletsByTimeRestricted(time1, time2);
+					addPalletsToTable(palletList);
+				}
 			} catch (SQLException e) {
 				invalidTimeInput();
 			}
@@ -350,7 +342,7 @@ public class TabSearchPallet {
 		productTF.setStyle("-fx-background-color: #ffff0052");
 		addInvalidProductInputMessage(productTF.getText() + " is not a valid cookie name");
 	}
-	
+
 	private void invalidCustomerInput() {
 		// Mark as YELLOW
 		customerTF.setStyle("-fx-background-color: #ffff0052");
@@ -358,12 +350,12 @@ public class TabSearchPallet {
 	}
 
 	private void invalidTimeInput() {
-		//Mark as YELLOW
+		// Mark as YELLOW
 		time1TF.setStyle("-fx-background-color: #ffff0052");
 		time2TF.setStyle("-fx-background-color: #ffff0052");
 		addInvalidTimeInputMessage(time1TF.getText() + " and/or " + time2TF.getText() + " not valid");
 	}
-	
+
 	public void restoreInvalidInputs() {
 		// Restore text field colors
 		barCodeTF.setStyle("");
@@ -394,7 +386,7 @@ public class TabSearchPallet {
 			invalidBarcodeInputMessage.setText(invalidBarcodeInputMessage.getText() + ", " + message);
 		}
 	}
-	
+
 	private void addInvalidCustomerInputMessage(String message) {
 		if (invalidCustomerInputMessage.getText().length() == 0) {
 			invalidCustomerInputMessage.setText(invalidCustomerInputMessage.getText() + message);
@@ -402,7 +394,7 @@ public class TabSearchPallet {
 			invalidCustomerInputMessage.setText(invalidCustomerInputMessage.getText() + ", " + message);
 		}
 	}
-	
+
 	private void addInvalidTimeInputMessage(String message) {
 		if (invalidTimeMessage.getText().length() == 0) {
 			invalidTimeMessage.setText(invalidTimeMessage.getText() + message);
@@ -411,10 +403,12 @@ public class TabSearchPallet {
 		}
 	}
 
-
-
-	private void clearTextField() {
+	public void clearTextFields() {
 		barCodeTF.setText("");
+		productTF.setText("");
+		customerTF.setText("");
+		time1TF.setText("");
+		time2TF.setText("");
 	}
 
 	private void emptyTable() {
@@ -431,7 +425,8 @@ public class TabSearchPallet {
 	}
 
 	private void insertData(Pallet p) {
-		tableData.add(new SearchPalletDataHolder(p.getId(),p.getCookie(),p.getDelivered(),p.getCustomer(),p.getProduced()));
+		tableData.add(new SearchPalletDataHolder(p.getId(), p.getCookie(), p.getDelivered(), p.getCustomer(),
+				p.getProduced()));
 	}
 
 }

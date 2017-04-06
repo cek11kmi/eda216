@@ -189,6 +189,8 @@ public class TabBlockPallet {
 			try {
 				if (db.getCookies().contains(product)){
 					if (db.blockPalletsByTimeAndCookie(start, end, product)){
+						clearTextFields();
+						restoreInvalidInputs();
 						addAllBlockedPalletsToTable();
 					} else {
 						//invalidBlockMessage();
@@ -207,115 +209,13 @@ public class TabBlockPallet {
 		
 		
 	}
-//	private void searchPalletByBarcode() {
-//		// Restore any previous error marks (e.g. text field marked yellow)
-//		restoreInvalidInputs();
-//
-//		// Get Strings from text fields
-//		String barCode = barCodeTF.getText();
-//		int barCodeInt = 0;
-//
-//		// Check if all text fields contains text of acceptable length
-//		if (barCode.length() > 0 && barCode.length() < 101) {
-//			try {
-//				barCodeInt = Integer.parseInt(barCode);
-//			}
-//			catch (NumberFormatException e){
-//				invalidBarCodeInput();
-//				return;
-//			}
-//			try {
-//				restoreInvalidInputs();
-//				clearTextField();
-//				List<Pallet> palletList = new LinkedList<Pallet>();
-//				palletList.add(db.getPalletByID(barCodeInt));
-//				addPalletsToTable(palletList);
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		} else {
-//			invalidBarCodeInput();
-//		}
-//	}
-//
-//	private void searchPalletByProduct() {
-//		restoreInvalidInputs();
-//		String product = productTF.getText();
-//		
-//		if (product.length() > 0 && product.length() < 101) {
-//			try {
-//				if (db.getCookies().contains(product)) {
-//					
-//					List<Pallet> palletList = db.getPalletsByProduct(product);
-//					if (palletList.size() != 0) {
-//						restoreInvalidInputs();
-//						clearTextField();
-//						addPalletsToTable(palletList);	
-//					}
-//				} else {
-//					invalidProductInput();
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		} else {
-//			invalidProductInput();
-//		}
-//		table.refresh();
-//	}
-//	
-//	private void searchPalletsByCustomer(){
-//		restoreInvalidInputs();
-//		String customer = customerTF.getText();
-//		
-//		if (customer.length() > 0 && customer.length() < 101) {
-//			try {
-//				if (db.getCustomers().contains(customer)) {
-//					
-//					List<Pallet> palletList = db.getPalletsByCustomer(customer);
-//					if (palletList.size() != 0) {
-//						restoreInvalidInputs();
-//						clearTextField();
-//						addPalletsToTable(palletList);				
-//					}
-//				} else {
-//					invalidCustomerInput();
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		} else {
-//			invalidCustomerInput();
-//		}
-//		table.refresh();
-//	}
-//	
-//	private void searchPalletsByTime(){
-//		restoreInvalidInputs();
-//		String time1 = time1TF.getText();
-//		String time2 = time2TF.getText();
-//		
-//		
-//	}
-//
-//	private void invalidBarCodeInput() {
-//		// Mark as YELLOW
-//		barCodeTF.setStyle("-fx-background-color: #ffff0052");
-//		addInvalidInputMessage(barCodeTF.getText() + " is not a valid bar code");
-//	}
-//
+
 	private void invalidProductInput() {
 		// Mark as YELLOW
 		productTF.setStyle("-fx-background-color: #ffff0052");
 		addInvalidProductInputMessage(productTF.getText() + " is not a valid cookie name");
 	}
-//	
-//	private void invalidCustomerInput() {
-//		// Mark as YELLOW
-//		customerTF.setStyle("-fx-background-color: #ffff0052");
-//		addInvalidCustomerInputMessage(customerTF.getText() + " is not a valid customer name");
-//	}
-//
+
 	private void invalidTimeInput() {
 		//Mark as YELLOW
 		time1TF.setStyle("-fx-background-color: #ffff0052");
@@ -341,23 +241,7 @@ public class TabBlockPallet {
 			invalidProductMessage.setText(invalidProductMessage.getText() + ", " + message);
 		}
 	}
-//
-//	private void addInvalidInputMessage(String message) {
-//		if (invalidBarcodeInputMessage.getText().length() == 0) {
-//			invalidBarcodeInputMessage.setText(invalidBarcodeInputMessage.getText() + message);
-//		} else {
-//			invalidBarcodeInputMessage.setText(invalidBarcodeInputMessage.getText() + ", " + message);
-//		}
-//	}
-//	
-//	private void addInvalidCustomerInputMessage(String message) {
-//		if (invalidCustomerInputMessage.getText().length() == 0) {
-//			invalidCustomerInputMessage.setText(invalidCustomerInputMessage.getText() + message);
-//		} else {
-//			invalidCustomerInputMessage.setText(invalidCustomerInputMessage.getText() + ", " + message);
-//		}
-//	}
-//	
+
 	private void addInvalidTimeInputMessage(String message) {
 		if (invalidTimeMessage.getText().length() == 0) {
 			invalidTimeMessage.setText(invalidTimeMessage.getText() + message);
@@ -365,12 +249,14 @@ public class TabBlockPallet {
 			invalidTimeMessage.setText(invalidTimeMessage.getText() + ", " + message);
 		}
 	}
-//
-//
-//
-//	private void clearTextField() {
-//		barCodeTF.setText("");
-//	}
+
+
+
+	public void clearTextFields() {
+		productTF.setText("");
+		time1TF.setText("");
+		time2TF.setText("");
+	}
 
 	private void emptyTable() {
 		tableData.clear();
@@ -399,7 +285,6 @@ public class TabBlockPallet {
 			}
 			table.refresh();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
